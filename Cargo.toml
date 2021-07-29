@@ -7,3 +7,4 @@ edition = "2018"
 
 [dependencies]
 rusb = "0.8.1"
+pico-args = "0.4.2"
