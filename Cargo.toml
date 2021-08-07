@@ -2,8 +2,13 @@
 name = "m27q-kvm"
 version = "0.1.0"
 edition = "2018"
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+categories = ["monitor", "hardware-support", "usb"]
+keywords = ["m27q", "kvm", "usb"]
+repository = "https://github.com/MabezDev/m27q-kvm"
+description = "A KVM control library for the GIGABYTE M27Q monitor."
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 rusb = "0.8.1"
