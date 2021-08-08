@@ -16,6 +16,7 @@ use rusb::{
 pub const M27Q_VID: u16 = 0x2109;
 pub const M27Q_PID: u16 = 0x8883;
 
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum KvmInput {
     Hdmi1 = 0x00,
     Hdmi2 = 0x01,
@@ -47,15 +48,20 @@ impl FromStr for KvmInput {
 
 struct Args {
     switch_back_input: Option<KvmInput>,
+    tray: bool,
     run_trigger: bool
 }
 
 fn main() {
     let mut pargs = pico_args::Arguments::from_env();
 
+    let tray: bool = pargs.value_from_str("--tray").unwrap();
+    let run_trigger = !tray && pargs.value_from_str("--kvm-trigger").expect("Nothing to do!");
+    
     let args = Args {
         switch_back_input: pargs.opt_value_from_str("--switch-back-input").unwrap(),
-        run_trigger: pargs.value_from_str("--kvm-trigger").unwrap_or(true),
+        tray,
+        run_trigger,
     };
 
     match Context::new() {
@@ -67,16 +73,24 @@ fn main() {
                     handle.write_control(0x40, 178, 0, 0, &[0x6e, 0x51, 0x84, 0x03, 0xe0, 0x6b, input as u8], Duration::from_secs(3)).unwrap();
                     sleep(Duration::from_millis(50))
                 }
+                if args.tray {
+                    launch_tray(&args);
+                }
                 if args.run_trigger {
                     println!("Triggering KVM switch...");
                     handle.write_control(0x40, 178, 0, 0, &[0x6e, 0x51, 0x84, 0x03, 0xe0, 0x69, 0x01], Duration::from_secs(3)).unwrap();
                 }
+
                 println!("Success!");
             }
             None => println!("could not find m27q"),
         },
         Err(e) => panic!("could not initialize libusb: {}", e),
     }
+}
+
+fn launch_tray(args: &Args) {
+
 }
 
 fn open_device<T: UsbContext>(
