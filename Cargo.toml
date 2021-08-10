@@ -13,3 +13,6 @@ description = "A KVM control library for the GIGABYTE M27Q monitor."
 [dependencies]
 rusb = "0.8.1"
 pico-args = "0.4.2"
+tray-item = "0.5.0-alpha"
+strum = "0.21"
+strum_macros = "0.21"
